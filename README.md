@@ -9,4 +9,6 @@ Redis as a session storage for Odoo
     + redis_host (optional) : default to 'localhost'
     + redis_port (optional) : default to 6379
     + redis_salt (optional) : salt using with generate_key 
+    + redis_password (optional) : password to use when using TLS/SSL encryption
+    + redis_ssl (optional) : use TLS/SSL encryption
 3. Restart Odoo process and install 'Redis as Session Storage' in Odoo Apps.

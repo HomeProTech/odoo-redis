@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from openerp.tools.func import lazy_property
-from openerp.tools import config as openerp_config
-from openerp import http
-from openerp.http import Root as OdooRoot
-from openerp.http import OpenERPSession
-from openerp.http import session_gc
+from odoo.tools.func import lazy_property
+from odoo.tools import config as odoo_config
+from odoo import http
+from odoo.http import Root as OdooRoot
+from odoo.http import OpenERPSession
+from odoo.http import session_gc
 
 from werkzeug.contrib.sessions import SessionStore
 
@@ -63,14 +63,16 @@ class RedisSessionStore(SessionStore):
         return self.session_class(data, sid, False)
 
 
-use_redis   = openerp_config.get('use_redis', False)
+use_redis   = odoo_config.get('use_redis', False)
 
 logger.debug("Enable Redis : {}".format(use_redis))
 
 if use_redis:
-    redis_host  = openerp_config.get('redis_host', 'localhost')
-    redis_port  = openerp_config.get('redis_port', 6379)
-    redis_salt  = openerp_config.get(
+    redis_host  = odoo_config.get('redis_host', 'localhost')
+    redis_port  = odoo_config.get('redis_port', 6379)
+    redis_password = odoo_config.get('redis_password', '')
+    redis_ssl = odoo_config.get('redis_ssl', False)
+    redis_salt  = odoo_config.get(
                     'redis_salt',
                     '-RMsSz~]3}4[Bu3_aEFx.5[57O^vH?`{X4R)Y3<Grvq6E:L?6#aoA@|/^^ky@%TI'
                     )
@@ -78,11 +80,19 @@ if use_redis:
     logger.debug("Connecting Redis at {}:{}".format(redis_host, redis_port))
 
     # TODO: connection pool option
-    redis_instance = redis.StrictRedis(
-                        host=redis_host,
-                        port=redis_port,
-                        db=0
-                        )
+    if redis_ssl:
+        redis_instance = redis.StrictRedis(
+            host=redis_host,
+            port=redis_port,
+            db=0
+        )
+    else:
+        redis_instance = redis.StrictRedis(
+            host=redis_host,
+            port=redis_port,
+            password=redis_password,
+            ssl=True
+        )
 
 
     class Root(OdooRoot):
