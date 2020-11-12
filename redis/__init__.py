@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from odoo.tools.func import lazy_property
-from odoo.tools import config as odoo_config
-from odoo import http
-from odoo.http import Root as OdooRoot
-from odoo.http import OpenERPSession
-from odoo.http import session_gc
+from openerp.tools.func import lazy_property
+from openerp.tools import config as odoo_config
+from openerp import http
+from openerp.http import Root as OdooRoot
+from openerp.http import OpenERPSession
+from openerp.http import session_gc
 
 from werkzeug.contrib.sessions import SessionStore
 
@@ -91,7 +91,11 @@ if use_redis:
             host=redis_host,
             port=redis_port,
             password=redis_password,
-            ssl=True
+            ssl=True,
+            retry_on_timeout=True,
+            socket_timeout=5.0,
+            socket_connect_timeout=5.0,
+            socket_keepalive=20
         )
 
 
